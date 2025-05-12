@@ -18,7 +18,7 @@ from pathlib import Path
 BASE_DIR = Path(__file__).resolve().parent.parent
 DATA_DIR = BASE_DIR.parent / 'data' / 'web'
 
-load_dotenv(dotenv_path= Path(__file__).resolve().parent.parent.parent / 'dotenvs_files' / '.env')
+load_dotenv(dotenv_path= Path(__file__).resolve().parent.parent.parent / 'dotenv_files' / '.env')
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
