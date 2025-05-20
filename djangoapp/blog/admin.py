@@ -29,7 +29,8 @@ class CategoryAdmin(admin.ModelAdmin):
     }
 
 @admin.register(Page)
-class PageAdmin(admin.ModelAdmin):
+class PageAdmin(SummernoteModelAdmin):
+    summernote_fields = ('content',)
     list_display = 'id', 'title', 'is_published',
     list_display_links = 'title',
     search_fields = 'id', 'slug', 'title', 'content',
