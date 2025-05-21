@@ -3,6 +3,7 @@ from utils.rands import random_letters, slugfy_new
 from django.contrib.auth.models import User
 from utils.images import resize_image
 from django_summernote.models import AbstractAttachment
+from django.urls import reverse
 
 class PostAttachment(AbstractAttachment):
     def save(self, *args, **kwargs):
@@ -160,6 +161,11 @@ class Post(models.Model):
 
     def __str__(self) -> str:
         return self.title
+    
+    def get_absolute_url(self):
+        if not self.is_published:
+            return reverse('blog:index')
+        return reverse('blog:post', args=(self.slug,))
 
     def save(self, *args, **kwargs):
         if not self.slug:
