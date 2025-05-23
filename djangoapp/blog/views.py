@@ -1,9 +1,8 @@
-from django.core.paginator import Paginator
-from django.shortcuts import render, redirect
+from django.shortcuts import render
 from blog.models import Post, Page
 from django.db.models import Q
 from django.contrib.auth.models import User
-from django.http import Http404, HttpRequest, HttpResponse
+from django.http import Http404
 from django.views.generic import ListView
 from typing import Any
 
@@ -76,55 +75,32 @@ class CategoryListView(PostListView):
             f'{self.object_list[0].category.name}'  # type: ignore
             ' - Categoria - '
         )
-        
+
         ctx.update({
             'page_title': page_title,
         })
 
         return ctx
-
-def category(request, slug):
-    posts = Post.objects.get_published().filter(category__slug=slug)
     
-    paginator = Paginator(posts, PER_PAGE)
-    page_number = request.GET.get("page")
-    page_obj = paginator.get_page(page_number)
+class TagListView(PostListView):
+    allow_empty = False
 
-    if len(page_obj) == 0:
-        raise Http404()
+    def get_queryset(self):
+        return super().get_queryset().filter(tags__slug=self.kwargs.get('slug'))
     
-    page_title = f'{page_obj[0].category.name} - Categoria -'
+    def get_context_data(self, **kwargs):
+        ctx =  super().get_context_data(**kwargs)
+        page_title = (
+            f'{self.object_list[0].tags.first().name}'  # type: ignore
+            ' - Tag - '
+        )
 
-    return render(
-        request,
-        'blog/pages/index.html',
-        {
-            'page_obj': page_obj,
+        ctx.update({
             'page_title': page_title,
-        }
-    )
+        })
 
-def tag(request, slug):
-    posts = Post.objects.get_published().filter(tags__slug=slug)
-
-    paginator = Paginator(posts, PER_PAGE)
-    page_number = request.GET.get("page")
-    page_obj = paginator.get_page(page_number)
-
-    if len(page_obj) == 0:
-        raise Http404()
+        return ctx
     
-    page_title = f'{page_obj[0].tags.first().name} - Tag -'
-
-    return render(
-        request,
-        'blog/pages/index.html',
-        {
-            'page_obj': page_obj,
-            'page_title': page_title,
-        }
-    )
-
 def search(request):
     search_value = request.GET.get("search", '').strip(' ')
     posts = (
